@@ -14,6 +14,20 @@ numberDays = 364
 totalProductionYear = 1466 * 365
 numberScenarios = 100   # number of years we want to run.
 
+
+def write_to_file(list_of_demand, list_of_loss, list_of_service_level):
+    ofile = open('scenarios.csv', "wb")
+
+    # writing the title of the columns
+    row = "Scenarion #, Demand(Year), Production(Year), Sales Loss(Year), %Demand Satisfaction\n"
+    ofile.write(row)
+
+    totalProductionInAYear = str(totalProductionYear);
+    for x in range(0, numberScenarios):
+        row = str(x) + "," + str(list_of_demand[x]) + "," + totalProductionInAYear + "," + str(list_of_loss[x]) + "," + str(list_of_service_level[x]) + "\n"
+        ofile.write(row)
+
+
 for j in range(numberScenarios):
 
     totalDemand = 0
@@ -42,18 +56,8 @@ for j in range(numberScenarios):
     loss.append(totalLoss)
     serviceLevel.append(totalDemandFulfilled/totalDemand)
 
-def write_to_file(list_of_demand, list_of_loss, list_of_service_level):
-    ofile = open('scenarios.csv', "wb")
+write_to_file(demand, loss, serviceLevel)
 
-    # writing the title of the columns
-    row = "Scenarion #, Demand(Year), Production(Year), Sales Loss(Year), %Demand Satisfaction\n"
-    ofile.write(row)
-
-    totalProductionInAYear = str(totalProductionYear);
-    for x in range(0,364):
-        row = str(x) + "," + str(list_of_demand[x]) + "," + totalProductionInAYear + "," + str(list_of_loss[x])
-        + "," + str(list_of_service_level[x]) + "\n"
-        ofile.write(row)
 
 
 
