@@ -7,19 +7,17 @@ amountFullfilledInAYear = []        # List of amount of demand/amount sold fulfi
 loss = []                           # list of loss per year.
 serviceLevel = []                   # percentage of service level per year.
 
-demandMean = 1000               # Demand mean per Day
-demandStandardDev = 200 ** 2
 basePeriod = 1                  # Base Period in Days
-serviceTargetLevel = 0          # Service Target Level for Demand
-zNormalValue = 0
+serviceTargetLevel = 0.99          # Service Target Level for Demand
+zNormalValue = zNormalValue = stat.norm.ppf(serviceTargetLevel)
 
-mean = 365000
-stdDev = 73000
-capacity = 1466
-numberDays = 364
+mean = 1000
+stdDev = 200
+capacity = 1
+numberPeriods = 1
 orderToShipping = 1;
 
-totalProductionYear = 1466 * 365
+totalProductionYear = 1
 numberScenarios = 100   # number of years we want to run.
 
 
@@ -38,51 +36,51 @@ def write_to_file(list_of_demand, list_of_loss, list_of_service_level):
 
 def ask_for_inputs():
     global orderToShipping
-    global serviceTargetLevel
-    global zNormalValue
     orderToShipping = input('Enter order to shipping time: ')
-    serviceTargetLevel = float(input('Enter Service Target Level: '))
-    zNormalValue = stat.norm.ppf(serviceTargetLevel)
+    # serviceTargetLevel = float(input('Enter Service Target Level: '))
 
 
 # Robust Demand Satisfaction requirements during target lead time give target service level.
 def calculate_capacity():
-    demand_satisfaction_capacity = (demandMean * orderToShipping/basePeriod) \
-                                 + (zNormalValue * numpy.math.sqrt(demandStandardDev * orderToShipping / basePeriod))
+    demand_satisfaction_capacity = (mean * orderToShipping/basePeriod) \
+                                 + (zNormalValue * numpy.math.sqrt(stdDev * orderToShipping / basePeriod))
     return demand_satisfaction_capacity
 
 
 ask_for_inputs()
 capacity = calculate_capacity()
+numberPeriods = int(round(365 / orderToShipping))
+totalProductionYear = capacity * numberPeriods
+
 print (capacity)
 
 for j in range(numberScenarios): #sample comment
 
-    totalDemandinOneDay = 0
+    totalDemandinPeriod = 0
     totalDemandFullfilledInOneYear = 0
     totalLoss = 0
 
-    for i in range(numberDays):
+    for i in range(numberPeriods):
 
         salesLoss = 0
-        generatedDailyDemand = round(numpy.random.normal(mean, stdDev), 0)
+        generatedPeriodDemand = orderToShipping * round(numpy.random.normal(mean, stdDev), 0)
+        print("Generated period demand " + str(generatedPeriodDemand))
+        if generatedPeriodDemand > capacity:
 
-        if generatedDailyDemand > capacity:
-
-            salesLoss = generatedDailyDemand - capacity
+            salesLoss = generatedPeriodDemand - capacity
             demandFulfilled = capacity
             totalLoss += salesLoss                  # adding the loss for that day to the total loss of the year
 
         else:
-            demandFulfilled = generatedDailyDemand
+            demandFulfilled = generatedPeriodDemand
 
-        totalDemandinOneDay += generatedDailyDemand                    # adding the total demand for the year
+        totalDemandinPeriod += generatedPeriodDemand                    # adding the total demand for the year
         totalDemandFullfilledInOneYear += demandFulfilled     # adding the total demand we were able to fulfill.
 
-    demand.append(totalDemandinOneDay)
+    demand.append(totalDemandinPeriod)
     amountFullfilledInAYear.append(totalDemandFullfilledInOneYear)
     loss.append(totalLoss)
-    serviceLevel.append(totalDemandFullfilledInOneYear / totalDemandinOneDay)
+    serviceLevel.append(totalDemandFullfilledInOneYear / totalDemandinPeriod)
 
 write_to_file(demand, loss, serviceLevel)
 
