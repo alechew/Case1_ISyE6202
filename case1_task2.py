@@ -63,7 +63,11 @@ for j in range(numberScenarios): #sample comment
     for i in range(numberPeriods):
 
         salesLoss = 0
-        generatedPeriodDemand = orderToShipping * round(numpy.random.normal(mean, stdDev), 0)
+        generatedPeriodDemand = 0
+
+        for d in range(31):
+            generatedPeriodDemand += round(numpy.random.normal(mean, stdDev), 0)
+
         print("Generated period demand " + str(generatedPeriodDemand))
         if generatedPeriodDemand > capacity:
 
