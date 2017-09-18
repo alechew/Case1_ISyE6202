@@ -11,8 +11,8 @@ basePeriod = 1                  # Base Period in Days
 serviceTargetLevel = 0.99          # Service Target Level for Demand
 zNormalValue = zNormalValue = stat.norm.ppf(serviceTargetLevel)
 
-mean = 1000
-stdDev = 200
+meanInPeriod = 1000
+stdDevInPeriod = 200
 capacity = 1
 numberPeriods = 1
 orderToShipping = 1;
@@ -42,8 +42,8 @@ def ask_for_inputs():
 
 # Robust Demand Satisfaction requirements during target lead time give target service level.
 def calculate_capacity():
-    demand_satisfaction_capacity = (mean * orderToShipping/basePeriod) \
-                                 + (zNormalValue * numpy.math.sqrt(stdDev * orderToShipping / basePeriod))
+    demand_satisfaction_capacity = (meanInPeriod * orderToShipping / basePeriod) \
+                                 + (zNormalValue * numpy.math.sqrt(stdDevInPeriod * orderToShipping / basePeriod))
     return demand_satisfaction_capacity
 
 
@@ -51,6 +51,9 @@ ask_for_inputs()
 capacity = calculate_capacity()
 numberPeriods = int(round(365 / orderToShipping))
 totalProductionYear = capacity * numberPeriods
+meanInPeriod = 1000 * orderToShipping
+stdDevInPeriod = 200 * orderToShipping ** (1/2)
+
 
 print (capacity)
 
@@ -65,8 +68,7 @@ for j in range(numberScenarios): #sample comment
         salesLoss = 0
         generatedPeriodDemand = 0
 
-        for d in range(31):
-            generatedPeriodDemand += round(numpy.random.normal(mean, stdDev), 0)
+        generatedPeriodDemand = round(numpy.random.normal(meanInPeriod, stdDevInPeriod), 0)
 
         print("Generated period demand " + str(generatedPeriodDemand))
         if generatedPeriodDemand > capacity:
