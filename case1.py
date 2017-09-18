@@ -2,10 +2,10 @@ import csv
 
 import numpy
 
-demand = []             # List of demand per year
-sales = []              # List of amount of demand/amount sold fulfilled per year
-loss = []               # list of loss per year.
-serviceLevel = []       # percentage of service level per year.
+demand = []                         # List of demand per year
+amountFullfilledInAYear = []        # List of amount of demand/amount sold fulfilled per year
+loss = []                           # list of loss per year.
+serviceLevel = []                   # percentage of service level per year.
 
 mean = 1000
 stdDev = 200
@@ -24,37 +24,37 @@ def write_to_file(list_of_demand, list_of_loss, list_of_service_level):
 
     totalProductionInAYear = str(totalProductionYear);
     for x in range(0, numberScenarios):
-        row = str(x) + "," + str(list_of_demand[x]) + "," + totalProductionInAYear + "," + str(list_of_loss[x]) + "," + str(list_of_service_level[x]) + "\n"
+        row = str(x + 1) + "," + str(list_of_demand[x]) + "," + totalProductionInAYear + "," + str(list_of_loss[x]) + "," + str(list_of_service_level[x]) + "\n"
         ofile.write(row)
 
 
 for j in range(numberScenarios):
 
-    totalDemand = 0
-    totalDemandFulfilled = 0
+    totalDemandinOneDay = 0
+    totalDemandFullfilledInOneYear = 0
     totalLoss = 0
 
     for i in range(numberDays):
 
         salesLoss = 0
-        randomVar = round(numpy.random.normal(mean, stdDev), 0)
+        generatedDailyDemand = round(numpy.random.normal(mean, stdDev), 0)
 
-        if randomVar > capacity:
+        if generatedDailyDemand > capacity:
 
-            salesLoss = randomVar - capacity
+            salesLoss = generatedDailyDemand - capacity
             demandFulfilled = capacity
-            totalLoss += salesLoss                  # adding the loss for that day to the total loss of the day
+            totalLoss += salesLoss                  # adding the loss for that day to the total loss of the year
 
         else:
-            demandFulfilled = randomVar
+            demandFulfilled = generatedDailyDemand
 
-        totalDemand += randomVar                    # adding the total demand for the year
-        totalDemandFulfilled += demandFulfilled     # adding the total demand we were able to fulfill.
+        totalDemandinOneDay += generatedDailyDemand                    # adding the total demand for the year
+        totalDemandFullfilledInOneYear += demandFulfilled     # adding the total demand we were able to fulfill.
 
-    demand.append(totalDemand)
-    sales.append(totalDemandFulfilled)
+    demand.append(totalDemandinOneDay)
+    amountFullfilledInAYear.append(totalDemandFullfilledInOneYear)
     loss.append(totalLoss)
-    serviceLevel.append(totalDemandFulfilled/totalDemand)
+    serviceLevel.append(totalDemandFullfilledInOneYear / totalDemandinOneDay)
 
 write_to_file(demand, loss, serviceLevel)
 
