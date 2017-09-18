@@ -28,7 +28,7 @@ def write_to_file(list_of_demand, list_of_loss, list_of_service_level):
         ofile.write(row)
 
 
-for j in range(numberScenarios):
+for j in range(numberScenarios): #sample comment
 
     totalDemandinOneDay = 0
     totalDemandFullfilledInOneYear = 0
