@@ -9,9 +9,9 @@ serviceLevel = []                   # percentage of service level per year.
 
 mean = 1000
 stdDev = 200
-capacity = 1466
+capacity = 1465
 numberDays = 364
-totalProductionYear = 1466 * 365
+totalProductionYear = 1465 * 365
 numberScenarios = 100   # number of years we want to run.
 
 
