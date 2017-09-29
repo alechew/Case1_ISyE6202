@@ -70,7 +70,7 @@ def calculate_year_growth_demand(iterations):
 
 
 def write_to_file():
-    ofile = open('Task2-2018.csv', "wb")
+    ofile = open('Task2-2018-2023.csv', "wb")
 
     # writing the title of the columns
     row = "Year,Week,Day,Demand\n"
@@ -81,8 +81,6 @@ def write_to_file():
         if isinstance(day, Classes.DailyDemand):
             row = day.year + "," + day.week + "," + day.day + "," + str(day.dailyDemand) + "\n"
         ofile.write(row)
-
-    ofile.write(str(yearlyDemand[0]))
     ofile.close()
 
 
@@ -124,4 +122,4 @@ for day in dailyDemandList:
     if isinstance(day, Classes.DailyDemand):
         print("Year: " + day.year + ", " + day.week + ", " + day.day + ", " + str(day.dailyDemand))
 
-# write_to_file()
+write_to_file()
