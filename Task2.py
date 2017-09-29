@@ -7,7 +7,7 @@ demandDistribution = Classes.DemandVar(365000, 73000)
 yearName = ["2018", "2019", "2020", "2021", "2022"]
 dayName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-years = 5
+years = 1
 weeks = 52
 days = 7
 weeklyDemandAverage = [0.004612546,0.004612546,
@@ -28,24 +28,35 @@ triangularAvg = [0.08, 0.1, 0.12, 0.22, 0.18, 0.18, 0.12]
 triangularMax = [0.12, 0.12, 0.16, 0.30, 0.25, 0.25, 0.20]
 
 yearlyDemand = []
+weeklyDemand = []
 dailyDemandList = []
 
 # Generate year random demands;
-for x in range(years - 1):
+for x in range(years):
     demand = demandDistribution.generate_random_demand()
     yearlyDemand.append(demand)
 
 
-for x in range(years - 1):
-    for i in range(weeks - 1):
+for x in range(years):
+    for i in range(weeks):
         beta = numpy.random.normal(weeklyDemandAverage[i], weeklyDemandStandardDeviation[i])
-        for j in range(days - 1):
+        weekDemand = beta * yearlyDemand[x]
+        weeklyDemand.append(weekDemand)
+        for j in range(days):
             p = random.uniform(0, 1)
             raw = 0
             if p <= pConstraints[j]:
                 raw = triangularMin[j] \
-                         + numpy.math.sqrt(p(triangularMax[j] - triangularMin[j])(triangularAvg[j] - triangularMin[j]))
+                         + numpy.math.sqrt(p * (triangularMax[j] - triangularMin[j]) * (triangularAvg[j] - triangularMin[j]))
             else:
                 raw = triangularMax[j] \
-                         - numpy.math.sqrt((1 - p)(triangularMax[j] - triangularMin[j])(triangularMax[j] - triangularAvg[j]))
-        dailyDemand = Classes.DailyDemand(yearName[x], str(i), dayName[j], raw)
+                         - numpy.math.sqrt((1 - p) * (triangularMax[j] - triangularMin[j]) * (triangularMax[j] - triangularAvg[j]))
+
+            singleDayDemand = weeklyDemand[i] * raw
+            dailyDemand = Classes.DailyDemand(yearName[x], str(i), dayName[j], yearlyDemand[x], weeklyDemand[i]
+                                              , singleDayDemand)
+            dailyDemandList.append(dailyDemand)
+
+for day in dailyDemandList:
+    if isinstance(day, Classes.DailyDemand):
+        print("Year: " + day.year + ", " + day.week + ", " + day.day + ", " + str(day.dailyDemand))

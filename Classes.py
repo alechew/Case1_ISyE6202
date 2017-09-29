@@ -62,6 +62,12 @@ class DailyDemand:
     dailyDemand = 0
 
     def __init__(self, year, week, day, yearlyDemand, weeklyDemand, dailyDemand):
+        self.year = year
+        self.week = week
+        self.day = day
+        self.yearlyDemand = yearlyDemand
+        self.weeklyDemand = weeklyDemand
+        self.dailyDemand = dailyDemand
 
 
 
