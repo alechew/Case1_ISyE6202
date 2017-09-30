@@ -1,6 +1,27 @@
 import Classes
 import numpy
 
+
+def write_to_file():
+    ofile = open('Task1-LeadTimes.csv', "wb")
+
+    # writing the title of the columns
+    row = "Scenario, Backlog, Demand, Capacity, Production,Inventory,OrdersToShip,Actual Amount Shipped,Satisfaction Level\n"
+    ofile.write(row)
+
+    for x in yearTotalDemand:
+        currentyear = x
+        count = 1
+        for obj in currentyear:
+            if isinstance(obj, Classes.DayManufactured):
+                row = str(count) + "," + str(obj.thisDayBackLog) + ","+ str(obj.demand) + "," \
+                      + str(dailyManufacturingCapacity) + "," + str(obj.produced) + "," + str(obj.inventory) \
+                      + "," + str(obj.ordersToShip) + "," + str(obj.amountShipped) + "," + str(obj.satisfactionPercentage) + "\n"
+                ofile.write(row)
+            count = count + 1
+    ofile.close()
+
+
 demandSpecifications = Classes.DemandVar(1000, 200)
 factorySpecifications = Classes.FactorySpecifications()
 totalYears = 2
@@ -27,8 +48,9 @@ for i in range(totalYears):
             ordersToShipToday = int(round(numpy.random.normal(demandSpecifications.mean,
                                                           demandSpecifications.standard_Deviation), 0))  # this will be the position (current position - lead time)
         else:
+            index = int(j - factorySpecifications.leadTime)
             ordersToShipToday = listOfDaysProducing[
-                int(j - factorySpecifications.leadTime)]  # of the item on the list of all saved dayManufactored List to
+                int(j - factorySpecifications.leadTime)].ordersToShip  # of the item on the list of all saved dayManufactored List to
 
         generatedDailyDemand = int(round(numpy.random.normal(demandSpecifications.mean,
                                                          demandSpecifications.standard_Deviation), 0))
@@ -64,13 +86,13 @@ for i in range(totalYears):
                 dayManufactured.demandUnfilled = dayManufactured.ordersToShip - (dayManufactured.inventory + dayManufactured.produced)
                 dayManufactured.inventory = 0
             else:
-                temp = dayManufactured.inventory
-                dayManufactured.inventory = temp - dayManufactured.ordersToShip
+                dayManufactured.inventory = dayManufactured.inventory - dayManufactured.ordersToShip
 
             if dayManufactured.amountShipped == dayManufactured.ordersToShip:
                 dayManufactured.satisfactionPercentage = 1.0
             else:
-                dayManufactured.satisfactionPercentage = (dayManufactured.amountShipped / dayManufactured.ordersToShip)
+
+                dayManufactured.satisfactionPercentage = (dayManufactured.amountShipped / float(dayManufactured.ordersToShip))
 
         # if dayManufactured.inventory > dayManufactured.ordersToShip:
         #     dayManufactured.inventory = dayManufactured.inventory - dayManufactured.ordersToShip
@@ -85,17 +107,8 @@ for i in range(totalYears):
         listOfDaysProducing.append(dayManufactured)
     yearTotalDemand.append(listOfDaysProducing)
 
-for x in yearTotalDemand:
-    currentYear = x
-    count = 1
-    for obj in currentYear:
-        print("Scenario, " + "Backlog, " + "Demand, " + "Capacity, " + "Production, " + "Inventory, " + "OrdersToShip, " + "Actual Amount Shipped, " + "Satisfaction Level")
-        if isinstance(obj, Classes.DayManufactured):
-            print(str(count) + " , " + str(x.backlog) + " , " + str(x.demand) + " , " + str(dailyManufacturingCapacity)
-              + " , " + str(x.produced) + " , " + str(x.inventory)
-              + " , " + str(x.ordersToShip) + " , " + str(x.amountShipped) + " , " + str(x.satisfactionPercentage))
+write_to_file()
 
-    count = count + 1
 
 
 

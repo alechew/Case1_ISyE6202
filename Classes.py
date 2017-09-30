@@ -95,7 +95,7 @@ class DayManufactured:
     ordersToShip = 0
     amountShipped = 0
     demandUnfilled = 0
-    satisfactionPercentage = 0.0
+    satisfactionPercentage = 0.00
 
     def __init__(self, backlog, produced, inventory, orderstoship):
         self.prevDayBacklog = backlog
