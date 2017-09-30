@@ -24,7 +24,7 @@ def write_to_file():
 
 demandSpecifications = Classes.DemandVar(1000, 200)
 factorySpecifications = Classes.FactorySpecifications()
-totalYears = 2
+totalYears = 1
 daysInAYear = 365
 
 
@@ -50,7 +50,7 @@ for i in range(totalYears):
         else:
             index = int(j - factorySpecifications.leadTime)
             ordersToShipToday = listOfDaysProducing[
-                int(j - factorySpecifications.leadTime)].ordersToShip  # of the item on the list of all saved dayManufactored List to
+                int(j - factorySpecifications.leadTime)].demand  # of the item on the list of all saved dayManufactored List to
 
         generatedDailyDemand = int(round(numpy.random.normal(demandSpecifications.mean,
                                                          demandSpecifications.standard_Deviation), 0))
@@ -75,6 +75,7 @@ for i in range(totalYears):
 
         if j == 0:
             dayManufactured.amountShipped = min(dayManufactured.ordersToShip, dayManufactured.inventory)
+            dayManufactured.satisfactionPercentage = 1.0
             if dayManufactured.ordersToShip > dayManufactured.inventory:
                 dayManufactured.inventory = 0
             else:
@@ -91,18 +92,7 @@ for i in range(totalYears):
             if dayManufactured.amountShipped == dayManufactured.ordersToShip:
                 dayManufactured.satisfactionPercentage = 1.0
             else:
-
                 dayManufactured.satisfactionPercentage = (dayManufactured.amountShipped / float(dayManufactured.ordersToShip))
-
-        # if dayManufactured.inventory > dayManufactured.ordersToShip:
-        #     dayManufactured.inventory = dayManufactured.inventory - dayManufactured.ordersToShip
-        #     dayManufactured.amountShipped = dayManufactured.ordersToShip
-        #     dayManufactured.satisfactionPercentage = 1.00
-        # else:
-        #     dayManufactured.inventory = 0
-        #     dayManufactured.demandUnfilled = dayManufactured.ordersToShip - dayManufactured.inventory
-        #     dayManufactured.amountShipped = dayManufactured.ordersToShip
-        #     dayManufactured.satisfactionPercentage = 1 - (dayManufactured.demandUnfilled / dayManufactured.ordersToShip)
 
         listOfDaysProducing.append(dayManufactured)
     yearTotalDemand.append(listOfDaysProducing)
