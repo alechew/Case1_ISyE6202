@@ -133,5 +133,28 @@ class YearSummary:
         self.satisfactionLevel = satisfactionlevel
 
 
+class FactorySpecificationsTask2:
+    leadTimes = []
+    yearlyDemandRequirements = []
+    yearlyStandardDeviations = []
+    dailyCapacity = []
+    serviceTargetLevel = 0.99
+    zNormalValue = zNormalValue = stat.norm.ppf(serviceTargetLevel)
+    numberDays = 365
+    numberScenarios = 6  # number Years we want to run
+    leadTime = 10
+    scenario = 0
+    scenarioValues = {15: 0,
+                      7: 1,
+                      5: 2,
+                      2: 3,
+                      1: 4}
+
+    def __init__(self, leadtimes, yearlyDemandRequirements, demandStandardDeviations, servicelevel, leadtimeselected):
+        self.leadTimes = leadtimes
+        self.yearlyDemandRequirements = yearlyDemandRequirements
+        self.yearlyStandardDeviations = demandStandardDeviations
+        self.serviceTargetLevel = servicelevel
+        self.leadTime = leadtimeselected
 
 

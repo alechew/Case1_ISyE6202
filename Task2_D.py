@@ -6,16 +6,21 @@ yearName = ["2018", "2019", "2020", "2021", "2022", "2023"]
 yearsOfGrowth = 5
 dayName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+factorySpecifications = Classes.FactorySpecificationsTask2
+leadTimes = [15, 7, 5, 2, 1]
+
 demandDistribution = Classes.DemandVar(365000, 73000)
 growthYearlyDemand = []     # this can be said is the mean of every new year demand
 growthStandardDeviation = []    # this can be said is the standardDeviation of every new year demand
 yearlyDemand = []       # generated random demand from the calculated yearly mean demands.
+dailyCapacityRequirements = []
 yearlyBetas = []
 yearlyPConstraints = [0.5, 0.714285714, 0.6, 0.6, 0.588235294, 0.65, 0.555555556]
 yearlyTriangularMin = [0.10, 0.08, 0.06, 0.0, -0.1]
 yearlyTriangularAvg = [0.20, 0.20, 0.15, 0.15, 0.12]
 yearlyTriangularMax = [0.25, 0.25, 0.20, 0.20, 0.20]
 
+daysInAYear = 365
 years = 6
 weeks = 52
 days = 7
@@ -38,6 +43,20 @@ triangularMax = [0.12, 0.12, 0.16, 0.30, 0.25, 0.25, 0.20]
 
 weeklyDemand = []
 dailyDemandList = []
+
+
+def calculate_daily_capacity():
+    leadTime = input("Enter Lead Time")
+    serviceLevel = input("Enter Service Level")
+    factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, growthYearlyDemand,
+                                                             growthStandardDeviation, serviceLevel, leadTime)
+    for x in range(len(factorySpecifications.yearlyDemandRequirements)):
+        leftSide = (factorySpecifications.yearlyDemandRequirements[x] * factorySpecifications.leadTime / 365)
+        valueInsideSqrt = pow(factorySpecifications.yearlyStandardDeviations[x], 2) * (15/float(365))
+        dailyCapacity = (leftSide + factorySpecifications.zNormalValue * numpy.sqrt(valueInsideSqrt)) / factorySpecifications.leadTime
+
+        dailyCapacityRequirements.append(int(dailyCapacity))
+    factorySpecifications.dailyCapacity = dailyCapacityRequirements
 
 
 def calculate_year_growth_demand(iterations):
@@ -85,8 +104,11 @@ def write_to_file():
 
 
 # generate yearly growth demand and standard deviation
-
 calculate_year_growth_demand(yearsOfGrowth)
+# generates the daily capacity requirements for each lead time and service level.
+calculate_daily_capacity()
+
+
 # Generate year random demands;
 count = 0
 while count <= years:
@@ -122,4 +144,7 @@ for day in dailyDemandList:
     if isinstance(day, Classes.DailyDemand):
         print("Year: " + day.year + ", " + day.week + ", " + day.day + ", " + str(day.dailyDemand))
 
-write_to_file()
+# write_to_file()
+
+# def calculate_service_level():
+#
