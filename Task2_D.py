@@ -140,11 +140,14 @@ for x in range(years):
                                               , singleDayDemand)
             dailyDemandList.append(dailyDemand)
 
+count = 1
 for day in dailyDemandList:
     if isinstance(day, Classes.DailyDemand):
         print("Year: " + day.year + ", " + day.week + ", " + day.day + ", " + str(day.dailyDemand))
+        if count % 364 == 0:
+            print("\n\n")
+    count += 1
 
 # write_to_file()
 
 # def calculate_service_level():
-#
