@@ -28,7 +28,7 @@ class DemandVar:
 # Target level we want to satisfy
 class FactorySpecifications:
     leadTimes = [30.0, 15.0, 10.0, 5.0, 2.0, 1.0, 0.5, 0.25, 0.1]
-    demandRequirements = [32549, 16802, 11472, 6041, 2658, 1466, 829, 483, 248]
+    demandRequirements = [32549, 16802, 11472, 6041, 2658, 1466, 1658, 1932, 2480]
     dailyCapacity = [1085, 1120, 1147, 1208, 1329, 1466, 1658, 1932, 2480]
     serviceTargetLevel = 0.99
     zNormalValue = zNormalValue = stat.norm.ppf(serviceTargetLevel)
@@ -50,7 +50,19 @@ class FactorySpecifications:
         print("Creating the scenario foe the case")
 
     def set_lead_time(self, leadtime):
-        self.leadTime = leadtime
+
+        if leadtime >= 1:
+            self.leadTime = leadtime
+            self.scenario = self.scenarioValues.get(leadtime)
+        elif leadtime == 0.5:
+            self.leadTime = 1
+            self.scenario = self.scenarioValues.get(0.5)
+        elif leadtime == 0.25:
+            self.leadTime = 1
+            self.scenario = self.scenarioValues.get(0.25)
+        else:
+            self.leadTime = 1
+            self.scenario = self.scenarioValues.get(0.1)
 
     # def calculate_capacity():
     #     demand_satisfaction_capacity = (meanInPeriod * orderToShipping / basePeriod) \

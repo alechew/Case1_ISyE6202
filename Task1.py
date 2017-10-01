@@ -29,8 +29,10 @@ daysInAYear = 365
 
 
 yearTotalDemand = []
-factorySpecifications.leadTime = input("Enter Lead Time:")
-factorySpecifications.scenario = factorySpecifications.scenarioValues.get(factorySpecifications.leadTime, 30)
+time = input("Enter Lead Time:")
+# factorySpecifications.leadTime = input("Enter Lead Time:")
+factorySpecifications.set_lead_time(time)
+
 
 dailyManufacturingCapacity = factorySpecifications.dailyCapacity[factorySpecifications.scenario]
 
@@ -44,15 +46,27 @@ for i in range(totalYears):
     backlog = 0  # very important variable as this temporarily store the missing parts produced previous day.
 
     for j in range(daysInAYear):
-        if j < factorySpecifications.leadTime - 1:
-            ordersToShipToday = int(round(numpy.random.normal(demandSpecifications.mean,
-                                                          demandSpecifications.standard_Deviation), 0))  # this will be the position (current position - lead time)
-        else:
-            index = int(j - (factorySpecifications.leadTime - 1))
-            ordersToShipToday = listOfDaysProducing[index].demand  # of the item on the list of all saved dayManufactored List to
 
         generatedDailyDemand = int(round(numpy.random.normal(demandSpecifications.mean,
                                                          demandSpecifications.standard_Deviation), 0))
+        if factorySpecifications.leadTime > 1:
+            if j < factorySpecifications.leadTime - 1:
+                ordersToShipToday = int(round(numpy.random.normal(demandSpecifications.mean, demandSpecifications.standard_Deviation), 0))
+            else:
+                if factorySpecifications.leadTime != 1 and j != 0:
+                    index = int(j - (factorySpecifications.leadTime - 1))
+                    ordersToShipToday = listOfDaysProducing[
+                        index].demand  # of the item on the list of all saved dayManufactored L
+
+        else:
+            ordersToShipToday = generatedDailyDemand
+        # elif j <= factorySpecifications.leadTime - 1:
+        #     ordersToShipToday = int(round(numpy.random.normal(demandSpecifications.mean,demandSpecifications.standard_Deviation), 0))
+        # else:
+        #     if factorySpecifications.leadTime != 1 and j != 0:
+        #         index = int(j - (factorySpecifications.leadTime - 1))
+        #         ordersToShipToday = listOfDaysProducing[index].demand  # of the item on the list of all saved dayManufactored List to
+
         if j == 0:
             backlog = 0
             prevDayInventory = min(generatedDailyDemand, dailyManufacturingCapacity)
