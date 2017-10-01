@@ -103,6 +103,7 @@ class DayManufactured:
     thisDayBackLog = 0
     demand = 0
     needToProduce = 0
+    produced = 0
     inventory = 0
     ordersToShip = 0
     amountShipped = 0
@@ -117,7 +118,19 @@ class DayManufactured:
         self.ordersToShip = orderstoship
 
 
+class YearSummary:
+    yearDemand = "0"
+    totalCapacity = "0"
+    totalProduced = "0"
+    totalShipped = "0"
+    satisfactionLevel = "0"
 
+    def __init__(self, yeardemand, totalcapacity, totalproduced, totalshipped, satisfactionlevel):
+        self.yearDemand = yeardemand
+        self.totalCapacity = totalcapacity
+        self.totalProduced = totalproduced
+        self.totalShipped = totalshipped
+        self.satisfactionLevel = satisfactionlevel
 
 
 

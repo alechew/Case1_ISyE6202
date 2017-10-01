@@ -1,9 +1,16 @@
 import Classes
 import numpy
 
+# this code is to generate data for Task 1 Part D.
+# Input OTS times as float numbers with just 1 decimal value.
 
-def write_to_file():
-    ofile = open('Task1-LeadTimes.csv', "wb")
+
+filename = " "
+
+
+def write_to_file_per_year():
+    global  filename
+    ofile = open(filename + ".csv", "wb")
 
     # writing the title of the columns
     row = "Scenario, Backlog, Demand, Capacity, Production,Inventory,OrdersToShip,Actual Amount Shipped,Satisfaction Level\n"
@@ -22,14 +29,55 @@ def write_to_file():
     ofile.close()
 
 
+def write_yearly_summary():
+    global filename
+    ofile = open(filename + ".csv", "wb")
+
+    # writing the title of the columns
+    row = "Year, Total Demand, Total Shipped, Satisfaction Level\n"
+    ofile.write(row)
+
+    count = 1
+    for x in yearSummarizeOverPeriod:
+
+        if isinstance(x, Classes.YearSummary):
+            row = str(count) + "," + str(x.yearDemand) + "," + str(x.totalShipped) + "," \
+                  + str(round(x.satisfactionLevel, 6)) + "\n"
+            ofile.write(row)
+        count = count + 1
+    ofile.close()
+
+
+def summarize_year_demands():
+    for x in range(totalYears):
+        totalDemand = 0
+        totalProduced = 0
+        totalCapacity = 0
+        totalShipped = 0
+        for obj in yearTotalDemand[x]:
+            if isinstance(obj, Classes.DayManufactured):
+                totalDemand += obj.demand
+                totalProduced += obj.produced
+                totalCapacity += factorySpecifications.dailyCapacity[factorySpecifications.scenario]
+                totalShipped += obj.amountShipped
+
+        satisfaction = totalShipped / float(totalDemand)
+        currentYearSummary = Classes.YearSummary(totalDemand, totalCapacity, totalProduced, totalShipped,
+                                                 satisfaction)
+        yearSummarizeOverPeriod.append(currentYearSummary)
+
+
 demandSpecifications = Classes.DemandVar(1000, 200)
 factorySpecifications = Classes.FactorySpecifications()
-totalYears = 1
+totalYears = 100
 daysInAYear = 365
 
 
 yearTotalDemand = []
+yearSummarizeOverPeriod = []
 time = input("Enter Lead Time:")
+filename = raw_input("Enter filename:")
+
 # factorySpecifications.leadTime = input("Enter Lead Time:")
 factorySpecifications.set_lead_time(time)
 
@@ -60,12 +108,6 @@ for i in range(totalYears):
 
         else:
             ordersToShipToday = generatedDailyDemand
-        # elif j <= factorySpecifications.leadTime - 1:
-        #     ordersToShipToday = int(round(numpy.random.normal(demandSpecifications.mean,demandSpecifications.standard_Deviation), 0))
-        # else:
-        #     if factorySpecifications.leadTime != 1 and j != 0:
-        #         index = int(j - (factorySpecifications.leadTime - 1))
-        #         ordersToShipToday = listOfDaysProducing[index].demand  # of the item on the list of all saved dayManufactored List to
 
         if j == 0:
             backlog = 0
@@ -110,7 +152,11 @@ for i in range(totalYears):
         listOfDaysProducing.append(dayManufactured)
     yearTotalDemand.append(listOfDaysProducing)
 
-write_to_file()
+
+summarize_year_demands()
+write_yearly_summary()
+# write_to_file_per_year()
+
 
 
 
