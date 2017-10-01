@@ -14,7 +14,7 @@ def write_to_file():
         count = 1
         for obj in currentyear:
             if isinstance(obj, Classes.DayManufactured):
-                row = str(count) + "," + str(obj.thisDayBackLog) + ","+ str(obj.demand) + "," \
+                row = str(count) + "," + str(obj.prevDayBacklog) + ","+ str(obj.demand) + "," \
                       + str(dailyManufacturingCapacity) + "," + str(obj.produced) + "," + str(obj.inventory) \
                       + "," + str(obj.ordersToShip) + "," + str(obj.amountShipped) + "," + str(obj.satisfactionPercentage) + "\n"
                 ofile.write(row)
@@ -44,13 +44,12 @@ for i in range(totalYears):
     backlog = 0  # very important variable as this temporarily store the missing parts produced previous day.
 
     for j in range(daysInAYear):
-        if j < factorySpecifications.leadTime:
+        if j < factorySpecifications.leadTime - 1:
             ordersToShipToday = int(round(numpy.random.normal(demandSpecifications.mean,
                                                           demandSpecifications.standard_Deviation), 0))  # this will be the position (current position - lead time)
         else:
-            index = int(j - factorySpecifications.leadTime)
-            ordersToShipToday = listOfDaysProducing[
-                int(j - factorySpecifications.leadTime)].demand  # of the item on the list of all saved dayManufactored List to
+            index = int(j - (factorySpecifications.leadTime - 1))
+            ordersToShipToday = listOfDaysProducing[index].demand  # of the item on the list of all saved dayManufactored List to
 
         generatedDailyDemand = int(round(numpy.random.normal(demandSpecifications.mean,
                                                          demandSpecifications.standard_Deviation), 0))
