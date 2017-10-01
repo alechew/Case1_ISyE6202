@@ -20,7 +20,7 @@ yearlyTriangularMin = [0.10, 0.08, 0.06, 0.0, -0.1]
 yearlyTriangularAvg = [0.20, 0.20, 0.15, 0.15, 0.12]
 yearlyTriangularMax = [0.25, 0.25, 0.20, 0.20, 0.20]
 
-daysInAYear = 365
+totalDaysInYear = 364
 years = 6
 weeks = 52
 days = 7
@@ -51,12 +51,13 @@ def calculate_daily_capacity():
     factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, growthYearlyDemand,
                                                              growthStandardDeviation, serviceLevel, leadTime)
     for x in range(len(factorySpecifications.yearlyDemandRequirements)):
-        leftSide = (factorySpecifications.yearlyDemandRequirements[x] * factorySpecifications.leadTime / 365)
-        valueInsideSqrt = pow(factorySpecifications.yearlyStandardDeviations[x], 2) * (15/float(365))
+        leftSide = (factorySpecifications.yearlyDemandRequirements[x] * factorySpecifications.leadTime / totalDaysInYear)
+        valueInsideSqrt = pow(factorySpecifications.yearlyStandardDeviations[x], 2) * (15/float(totalDaysInYear))
         dailyCapacity = (leftSide + factorySpecifications.zNormalValue * numpy.sqrt(valueInsideSqrt)) / factorySpecifications.leadTime
 
         dailyCapacityRequirements.append(int(dailyCapacity))
     factorySpecifications.dailyCapacity = dailyCapacityRequirements
+    return factorySpecifications
 
 
 def calculate_year_growth_demand(iterations):
@@ -67,6 +68,8 @@ def calculate_year_growth_demand(iterations):
         if i == 0:
             yearDemand = 365000
             yearDeviation = 73000
+            growthYearlyDemand.append(365000)
+            growthStandardDeviation.append(73000)
         else:
             yearDemand = growthYearlyDemand[i - 1]
             yearDeviation = growthStandardDeviation[i -1]
@@ -89,7 +92,7 @@ def calculate_year_growth_demand(iterations):
 
 
 def write_to_file():
-    ofile = open('Task2-2018-2023.csv', "wb")
+    ofile = open('Task2-2018-2023-BBBB.csv', "wb")
 
     # writing the title of the columns
     row = "Year,Week,Day,Demand\n"
@@ -103,10 +106,25 @@ def write_to_file():
     ofile.close()
 
 
+def generate_beta(index):
+    return numpy.random.normal(weeklyDemandAverage[index], weeklyDemandStandardDeviation[index])
+
+
+def generate_raw(index):
+    p = random.uniform(0, 1)
+    raw = 0
+    if p <= pConstraints[index]:
+        raw = triangularMin[index] \
+              + numpy.math.sqrt(p * (triangularMax[j] - triangularMin[index]) * (triangularAvg[index] - triangularMin[index]))
+    else:
+        raw = triangularMax[index] \
+              - numpy.math.sqrt((1 - p) * (triangularMax[index] - triangularMin[index]) * (triangularMax[index] - triangularAvg[index]))
+    return raw
+
 # generate yearly growth demand and standard deviation
 calculate_year_growth_demand(yearsOfGrowth)
 # generates the daily capacity requirements for each lead time and service level.
-calculate_daily_capacity()
+factorySpecifications = calculate_daily_capacity()
 
 
 # Generate year random demands;
@@ -122,22 +140,15 @@ while count <= years:
 
 for x in range(years):
     for i in range(weeks):
-        beta = numpy.random.normal(weeklyDemandAverage[i], weeklyDemandStandardDeviation[i])
+        beta = generate_beta(i)
         weekDemand = beta * yearlyDemand[x]
         weeklyDemand.append(weekDemand)
         for j in range(days):
-            p = random.uniform(0, 1)
-            raw = 0
-            if p <= pConstraints[j]:
-                raw = triangularMin[j] \
-                         + numpy.math.sqrt(p * (triangularMax[j] - triangularMin[j]) * (triangularAvg[j] - triangularMin[j]))
-            else:
-                raw = triangularMax[j] \
-                         - numpy.math.sqrt((1 - p) * (triangularMax[j] - triangularMin[j]) * (triangularMax[j] - triangularAvg[j]))
+            raw = generate_raw(j)
 
             singleDayDemand = round(weeklyDemand[i] * raw, 0)
             dailyDemand = Classes.DailyDemand(yearName[x], str(i + 1), dayName[j], yearlyDemand[x], weeklyDemand[i]
-                                              , singleDayDemand)
+                                              , singleDayDemand, x, i, j)
             dailyDemandList.append(dailyDemand)
 
 count = 1
@@ -148,6 +159,152 @@ for day in dailyDemandList:
             print("\n\n")
     count += 1
 
-# write_to_file()
+write_to_file()
 
 # def calculate_service_level():
+
+
+
+
+
+
+
+
+
+
+
+
+def summarize_year_demands():
+    for x in range(totalYears):
+        totalDemand = 0
+        totalProduced = 0
+        totalCapacity = 0
+        totalShipped = 0
+        for obj in yearTotalDemand[x]:
+            if isinstance(obj, Classes.DayManufactured):
+                totalDemand += obj.demand
+                totalProduced += obj.produced
+                totalCapacity += factorySpecifications.dailyCapacity[factorySpecifications.scenario]
+                totalShipped += obj.amountShipped
+
+        satisfaction = totalShipped / float(totalDemand)
+        currentYearSummary = Classes.YearSummary(totalDemand, totalCapacity, totalProduced, totalShipped,
+                                                 satisfaction)
+        yearSummarizeOverPeriod.append(currentYearSummary)
+
+
+def write_yearly_summary():
+    global filename
+    ofile = open("Task2-2018-2023-BBBB-SUMMARY.csv", "wb")
+
+    # writing the title of the columns
+    row = "Year, Total Demand, Total Shipped, Satisfaction Level\n"
+    ofile.write(row)
+
+    count = 1
+    for x in yearSummarizeOverPeriod:
+
+        if isinstance(x, Classes.YearSummary):
+            row = str(count) + "," + str(x.yearDemand) + "," + str(x.totalShipped) + "," \
+                  + str(round(x.satisfactionLevel, 6)) + "\n"
+            ofile.write(row)
+        count = count + 1
+    ofile.close()
+
+
+
+
+
+
+
+yearTotalDemand = []
+yearSummarizeOverPeriod = []
+eachYearDailyDemandList = []
+totalYears = len(dailyDemandList) / totalDaysInYear
+
+index = 0
+tempList = []
+
+# separating each year.
+for x in range(totalYears):
+    tempList = [dailyDemandList[index]]
+    index += 1
+    while index % 364 != 0:
+        tempList.append(dailyDemandList[index])
+        index += 1
+    eachYearDailyDemandList.append(tempList)
+
+
+currentYearIndex = 0
+for i in range(totalYears):
+
+    listOfDaysProducing = []
+    totalDemandInOneDay = 0
+    totalDemandFulfilledInOneYear = 0
+    totalLoss = 0
+    backlog = 0  # very important variable as this temporarily store the missing parts produced previous day.
+
+    dailyManufacturingCapacity = factorySpecifications.dailyCapacity[currentYearIndex]
+
+    yearList = eachYearDailyDemandList[i]
+
+    for k in range(len(yearList)):
+        dayDemandGenerated = yearList[k]
+        if isinstance(dayDemandGenerated, Classes.DailyDemand):
+            generatedDailyDemand = dayDemandGenerated.dailyDemand
+
+            if k < factorySpecifications.leadTime - 1:
+                ordersToShipToday = round(dayDemandGenerated.weeklyDemand * generate_raw(dayDemandGenerated.dayNumber), 0)
+            else:
+                if factorySpecifications.leadTime != 1 and k != 0:
+                    index = int(k - (factorySpecifications.leadTime - 1))
+                    ordersToShipToday = listOfDaysProducing[
+                        index].demand  # of the item on the list of all saved dayManufactored L
+
+            if k == 0:
+                backlog = 0
+                prevDayInventory = min(generatedDailyDemand, dailyManufacturingCapacity)
+                prevDayAmountShipped = round(dayDemandGenerated.weeklyDemand * generate_raw(dayDemandGenerated.dayNumber), 0)
+            else:
+                if isinstance(listOfDaysProducing[k - 1], Classes.DayManufactured):
+                    prevDayInventory = listOfDaysProducing[k - 1].inventory
+                    backlog = listOfDaysProducing[k - 1].thisDayBackLog
+
+            dayManufactured = Classes.DayManufactured(backlog, generatedDailyDemand, prevDayInventory, ordersToShipToday)
+
+            if dayManufactured.needToProduce > dailyManufacturingCapacity:
+                dayManufactured.thisDayBackLog = dayManufactured.needToProduce - dailyManufacturingCapacity  # Calculating backlog
+            else:
+                dayManufactured.thisDayBackLog = 0
+
+            dayManufactured.produced = min(dayManufactured.needToProduce, dailyManufacturingCapacity)
+
+            if k == 0:
+                dayManufactured.amountShipped = min(dayManufactured.ordersToShip, dayManufactured.inventory)
+                dayManufactured.satisfactionPercentage = 1.0
+                if dayManufactured.ordersToShip > dayManufactured.inventory:
+                    dayManufactured.inventory = 0
+                else:
+                    dayManufactured.inventory = dayManufactured.needToProduce - dayManufactured.ordersToShip
+            else:
+                dayManufactured.inventory = dayManufactured.inventory + dayManufactured.produced
+                dayManufactured.amountShipped = min(dayManufactured.inventory, dayManufactured.ordersToShip)
+                if dayManufactured.inventory < dayManufactured.ordersToShip:
+                    dayManufactured.demandUnfilled = dayManufactured.ordersToShip - (
+                    dayManufactured.inventory + dayManufactured.produced)
+                    dayManufactured.inventory = 0
+                else:
+                    dayManufactured.inventory = dayManufactured.inventory - dayManufactured.ordersToShip
+
+                if dayManufactured.amountShipped == dayManufactured.ordersToShip:
+                    dayManufactured.satisfactionPercentage = 1.0
+                else:
+                    dayManufactured.satisfactionPercentage = (
+                    dayManufactured.amountShipped / float(dayManufactured.ordersToShip))
+
+            listOfDaysProducing.append(dayManufactured)
+    currentYearIndex += 1
+    yearTotalDemand.append(listOfDaysProducing)
+
+summarize_year_demands()
+write_yearly_summary()

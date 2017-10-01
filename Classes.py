@@ -85,17 +85,23 @@ class DailyDemand:
     year = "2018"
     week = "1"
     day = "Monday"
+    dayNumber = 0
+    weekNumber = 0
+    yearNumber = 0
     yearlyDemand = 0
     weeklyDemand = 0
     dailyDemand = 0
 
-    def __init__(self, year, week, day, yearlyDemand, weeklyDemand, dailyDemand):
+    def __init__(self, year, week, day, yearlyDemand, weeklyDemand, dailyDemand, yearindex, weekindex, dayindex):
         self.year = year
         self.week = week
         self.day = day
         self.yearlyDemand = yearlyDemand
         self.weeklyDemand = weeklyDemand
         self.dailyDemand = dailyDemand
+        self.yearIndex = yearindex
+        self.weekNumber = weekindex
+        self.dayNumber = dayindex
 
 
 class DayManufactured:

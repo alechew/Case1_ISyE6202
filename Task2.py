@@ -115,7 +115,7 @@ for x in range(years):
 
             singleDayDemand = round(weeklyDemand[i] * raw, 0)
             dailyDemand = Classes.DailyDemand(yearName[x], str(i + 1), dayName[j], yearlyDemand[x], weeklyDemand[i]
-                                              , singleDayDemand)
+                                              , singleDayDemand, x, i, j)
             dailyDemandList.append(dailyDemand)
 
 for day in dailyDemandList:
