@@ -66,12 +66,12 @@ for i in range(totalYears):
 
         dayManufactured = Classes.DayManufactured(backlog, generatedDailyDemand, prevDayInventory, ordersToShipToday)
 
-        if dayManufactured.demand > dailyManufacturingCapacity:
-            dayManufactured.thisDayBackLog = dayManufactured.demand - dailyManufacturingCapacity  # Calculating backlog
+        if dayManufactured.needToProduce > dailyManufacturingCapacity:
+            dayManufactured.thisDayBackLog = dayManufactured.needToProduce - dailyManufacturingCapacity  # Calculating backlog
         else:
             dayManufactured.thisDayBackLog = 0
 
-        dayManufactured.produced = min(dayManufactured.prevDayBacklog + dayManufactured.demand, dailyManufacturingCapacity)
+        dayManufactured.produced = min(dayManufactured.needToProduce, dailyManufacturingCapacity)
 
         if j == 0:
             dayManufactured.amountShipped = min(dayManufactured.ordersToShip, dayManufactured.inventory)
@@ -79,7 +79,7 @@ for i in range(totalYears):
             if dayManufactured.ordersToShip > dayManufactured.inventory:
                 dayManufactured.inventory = 0
             else:
-                dayManufactured.inventory = dayManufactured.demand - dayManufactured.ordersToShip
+                dayManufactured.inventory = dayManufactured.needToProduce - dayManufactured.ordersToShip
         else:
             dayManufactured.inventory = dayManufactured.inventory + dayManufactured.produced
             dayManufactured.amountShipped = min(dayManufactured.inventory, dayManufactured.ordersToShip)

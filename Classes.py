@@ -90,17 +90,17 @@ class DayManufactured:
     prevDayBacklog = 0
     thisDayBackLog = 0
     demand = 0
-    produced = 0
+    needToProduce = 0
     inventory = 0
     ordersToShip = 0
     amountShipped = 0
     demandUnfilled = 0
     satisfactionPercentage = 0.00
 
-    def __init__(self, backlog, produced, inventory, orderstoship):
+    def __init__(self, backlog, receivedDemand,inventory, orderstoship):
         self.prevDayBacklog = backlog
-        self.produced = produced
-        self.demand = self.thisDayBackLog + self.produced
+        self.needToProduce = self.prevDayBacklog + receivedDemand
+        self.demand = receivedDemand
         self.inventory = inventory
         self.ordersToShip = orderstoship
 
