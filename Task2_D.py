@@ -1,6 +1,7 @@
 import Classes
 import numpy
 import random
+import statistics
 
 yearName = ["2018", "2019", "2020", "2021", "2022", "2023"]
 yearsOfGrowth = 5
@@ -121,10 +122,43 @@ def generate_raw(index):
               - numpy.math.sqrt((1 - p) * (triangularMax[index] - triangularMin[index]) * (triangularMax[index] - triangularAvg[index]))
     return raw
 
+
+yearMeanOfRandomDemand = []
+yearDeviationOfRandomDemand = []
+
+
+def calculate_mean_deviation():
+    for i in range(6):
+        yearList = eachYearDailyDemandList[i]
+        demand = []
+        for j in range(len(yearList)):
+            obj = yearList[j]
+            if isinstance(obj, Classes.DailyDemand):
+                demand.append(obj.dailyDemand)
+
+        theStdDeviation = statistics.stdev(demand)
+        theMean = statistics.mean(demand)
+        yearMeanOfRandomDemand.append(theMean)
+        yearDeviationOfRandomDemand.append(theStdDeviation)
+
+
+def calculate_daily_capacity_v2():
+    leadTime = input("Enter Lead Time")
+    serviceLevel = input("Enter Service Level")
+    factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, yearMeanOfRandomDemand,
+                                                             yearDeviationOfRandomDemand, serviceLevel, leadTime)
+    for x in range(len(factorySpecifications.yearlyDemandRequirements)):
+        leftSide = (factorySpecifications.yearlyDemandRequirements[x] * factorySpecifications.leadTime)
+        valueInsideSqrt = pow(factorySpecifications.yearlyStandardDeviations[x], 2) * factorySpecifications.leadTime
+        dailyCapacity = (leftSide + factorySpecifications.zNormalValue * numpy.sqrt(valueInsideSqrt)) / factorySpecifications.leadTime
+
+        dailyCapacityRequirements.append(int(dailyCapacity))
+    factorySpecifications.dailyCapacity = dailyCapacityRequirements
+    return factorySpecifications
+
+
 # generate yearly growth demand and standard deviation
 calculate_year_growth_demand(yearsOfGrowth)
-# generates the daily capacity requirements for each lead time and service level.
-factorySpecifications = calculate_daily_capacity()
 
 
 # Generate year random demands;
@@ -151,6 +185,29 @@ for x in range(years):
                                               , singleDayDemand, x, i, j)
             dailyDemandList.append(dailyDemand)
 
+index = 0
+eachYearDailyDemandList = []
+totalYears = len(dailyDemandList) / totalDaysInYear
+tempList = []
+
+# separating each year.
+for x in range(totalYears):
+    tempList = [dailyDemandList[index]]
+    index += 1
+    while index % 364 != 0:
+        tempList.append(dailyDemandList[index])
+        index += 1
+    eachYearDailyDemandList.append(tempList)
+
+
+# calculating standard deviation for the random data generated.
+calculate_mean_deviation()
+
+# generates the daily capacity requirements for each lead time and service level.
+factorySpecifications = calculate_daily_capacity_v2()
+# factorySpecifications = calculate_daily_capacity()
+
+
 count = 1
 for day in dailyDemandList:
     if isinstance(day, Classes.DailyDemand):
@@ -162,16 +219,6 @@ for day in dailyDemandList:
 write_to_file()
 
 # def calculate_service_level():
-
-
-
-
-
-
-
-
-
-
 
 
 def summarize_year_demands():
@@ -212,27 +259,8 @@ def write_yearly_summary():
     ofile.close()
 
 
-
-
-
-
-
 yearTotalDemand = []
 yearSummarizeOverPeriod = []
-eachYearDailyDemandList = []
-totalYears = len(dailyDemandList) / totalDaysInYear
-
-index = 0
-tempList = []
-
-# separating each year.
-for x in range(totalYears):
-    tempList = [dailyDemandList[index]]
-    index += 1
-    while index % 364 != 0:
-        tempList.append(dailyDemandList[index])
-        index += 1
-    eachYearDailyDemandList.append(tempList)
 
 
 currentYearIndex = 0
@@ -305,6 +333,7 @@ for i in range(totalYears):
             listOfDaysProducing.append(dayManufactured)
     currentYearIndex += 1
     yearTotalDemand.append(listOfDaysProducing)
+
 
 summarize_year_demands()
 write_yearly_summary()
