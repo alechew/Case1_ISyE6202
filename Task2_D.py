@@ -281,13 +281,16 @@ for i in range(totalYears):
         if isinstance(dayDemandGenerated, Classes.DailyDemand):
             generatedDailyDemand = dayDemandGenerated.dailyDemand
 
-            if k < factorySpecifications.leadTime - 1:
-                ordersToShipToday = round(dayDemandGenerated.weeklyDemand * generate_raw(dayDemandGenerated.dayNumber), 0)
+            if factorySpecifications.leadTime > 1:
+                if k < factorySpecifications.leadTime - 1:
+                    ordersToShipToday = round(dayDemandGenerated.weeklyDemand * generate_raw(dayDemandGenerated.dayNumber), 0)
+                else:
+                    if factorySpecifications.leadTime != 1 and k != 0:
+                        index = int(k - (factorySpecifications.leadTime - 1))
+                        ordersToShipToday = listOfDaysProducing[
+                            index].demand  # of the item on the list of all saved dayManufactored
             else:
-                if factorySpecifications.leadTime != 1 and k != 0:
-                    index = int(k - (factorySpecifications.leadTime - 1))
-                    ordersToShipToday = listOfDaysProducing[
-                        index].demand  # of the item on the list of all saved dayManufactored L
+                ordersToShipToday = round(dayDemandGenerated.weeklyDemand * generate_raw(dayDemandGenerated.dayNumber), 0)
 
             if k == 0:
                 backlog = 0
