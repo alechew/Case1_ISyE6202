@@ -56,6 +56,8 @@ def calculate_daily_capacity():
 
     factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, growthYearlyDemand,
                                                              growthStandardDeviation, serviceLevel, leadTime)
+    factorySpecifications.set_lead_time(leadTime)
+
     for x in range(len(factorySpecifications.yearlyDemandRequirements)):
         leftSide = (factorySpecifications.yearlyDemandRequirements[x] * factorySpecifications.leadTime / totalDaysInYear)
         valueInsideSqrt = pow(factorySpecifications.yearlyStandardDeviations[x], 2) * (15/float(totalDaysInYear))
@@ -155,6 +157,9 @@ def calculate_daily_capacity_v2():
 
     factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, yearMeanOfRandomDemand,
                                                              yearDeviationOfRandomDemand, serviceLevel, leadTime)
+
+    factorySpecifications.set_lead_time(leadTime)
+
     for x in range(len(factorySpecifications.yearlyDemandRequirements)):
         leftSide = (factorySpecifications.yearlyDemandRequirements[x] * factorySpecifications.leadTime)
         valueInsideSqrt = pow(factorySpecifications.yearlyStandardDeviations[x], 2) * factorySpecifications.leadTime

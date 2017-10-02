@@ -150,11 +150,11 @@ class FactorySpecificationsTask2:
     numberScenarios = 6  # number Years we want to run
     leadTime = 10
     scenario = 0
-    scenarioValues = {15: 0,
-                      7: 1,
-                      5: 2,
-                      2: 3,
-                      1: 4}
+    scenarioValues = {15.0: 0,
+                      7.0: 1,
+                      5.0: 2,
+                      2.0: 3,
+                      1.0: 4}
 
     def __init__(self, leadtimes, yearlyDemandRequirements, demandStandardDeviations, servicelevel, leadtimeselected):
         self.leadTimes = leadtimes
@@ -163,4 +163,6 @@ class FactorySpecificationsTask2:
         self.serviceTargetLevel = servicelevel
         self.leadTime = leadtimeselected
 
-
+    def set_lead_time(self, leadtime):
+            self.leadTime = leadtime
+            self.scenario = self.scenarioValues.get(leadtime)
