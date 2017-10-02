@@ -3,6 +3,8 @@ import numpy
 import random
 import statistics
 
+filename = ""
+
 yearName = ["2018", "2019", "2020", "2021", "2022", "2023"]
 yearsOfGrowth = 5
 dayName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -47,8 +49,11 @@ dailyDemandList = []
 
 
 def calculate_daily_capacity():
+    global filename
     leadTime = input("Enter Lead Time")
     serviceLevel = input("Enter Service Level")
+    filename = "Lead_Time_" + str(leadTime) + "Service_Level" + str(serviceLevel)
+
     factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, growthYearlyDemand,
                                                              growthStandardDeviation, serviceLevel, leadTime)
     for x in range(len(factorySpecifications.yearlyDemandRequirements)):
@@ -93,7 +98,7 @@ def calculate_year_growth_demand(iterations):
 
 
 def write_to_file():
-    ofile = open('Task2-2018-2023-BBBB.csv', "wb")
+    ofile = open(filename + "_Generated-Random-Demand.csv", "wb")
 
     # writing the title of the columns
     row = "Year,Week,Day,Demand\n"
@@ -143,8 +148,11 @@ def calculate_mean_deviation():
 
 
 def calculate_daily_capacity_v2():
+    global filename
     leadTime = input("Enter Lead Time")
     serviceLevel = input("Enter Service Level")
+    filename = "Lead_Time_" + str(leadTime) + "_Service_Level_" + str(serviceLevel)
+
     factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, yearMeanOfRandomDemand,
                                                              yearDeviationOfRandomDemand, serviceLevel, leadTime)
     for x in range(len(factorySpecifications.yearlyDemandRequirements)):
@@ -241,8 +249,8 @@ def summarize_year_demands():
 
 
 def write_yearly_summary():
-    global filename
-    ofile = open("Task2-2018-2023-BBBB-SUMMARY.csv", "wb")
+    file_name = filename + "_Yearly-Summary.csv"
+    ofile = open(file_name, "wb")
 
     # writing the title of the columns
     row = "Year, Total Demand, Total Shipped, Satisfaction Level\n"
@@ -256,6 +264,11 @@ def write_yearly_summary():
                   + str(round(x.satisfactionLevel, 6)) + "\n"
             ofile.write(row)
         count = count + 1
+
+    row = "Lead Time, Satisfaction Level\n"
+    ofile.write(row)
+    row = str(factorySpecifications.leadTime) + "," + str(factorySpecifications.serviceTargetLevel)
+    ofile.write(row)
     ofile.close()
 
 
