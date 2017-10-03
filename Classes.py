@@ -1,9 +1,7 @@
 import scipy.stats as stat
 import numpy
 
-# A class am creating to teach
-from case1 import stdDev
-
+# classes used in code.
 
 class TestClass:
     name = "Alejandro"
