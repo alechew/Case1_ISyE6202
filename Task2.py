@@ -2,6 +2,10 @@ import Classes
 import numpy
 import random
 
+# calculates the Estimate 2018 - 2023 demand satisfaction capacity requirements according to task2 Assumptions
+#  promising 15, 7, 5, 2 or 1 day-s for order-to-shipping time and service levels of 99%, 99.5% vs. 99.9%.
+
+
 yearName = ["2018", "2019", "2020", "2021", "2022", "2023"]
 yearsOfGrowth = 5
 dayName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -41,6 +45,10 @@ dailyDemandList = []
 
 
 def calculate_year_growth_demand(iterations):
+    """
+        this method calculates the year growth demand  from 2018 to 2023 using the triangular distribution table
+        provided by the case 1 study.
+    """
 
     for i in range(iterations):
         yearDemand = 0

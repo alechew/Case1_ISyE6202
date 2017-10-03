@@ -4,7 +4,6 @@ import numpy
 # this code is to generate data for Task 1 Part D.
 # Input OTS times as float numbers with just 1 decimal value.
 
-
 filename = " "
 
 

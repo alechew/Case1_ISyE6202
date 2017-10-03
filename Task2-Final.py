@@ -3,6 +3,11 @@ import numpy
 import random
 import statistics
 
+"""
+    calculates the Estimate 2018 - 2023 demand satisfaction capacity requirements according to task2 Assumptions
+    promising 15, 7, 5, 2 or 1 day-s for order-to-shipping time and service levels of 99%, 99.5% vs. 99.9%.
+"""
+
 filename = ""
 
 yearName = ["2018", "2019", "2020", "2021", "2022", "2023"]
@@ -49,6 +54,9 @@ dailyDemandList = []
 
 
 def calculate_daily_capacity():
+    """"Calculates the daily capacity based on the mean and standard deviation from the random generated
+        daily demand following task 2 assumptions."""
+
     global filename
     leadTime = input("Enter Lead Time")
     serviceLevel = input("Enter Service Level")
@@ -69,6 +77,8 @@ def calculate_daily_capacity():
 
 
 def calculate_year_growth_demand(iterations):
+    """calculates the yearly mean and standard deviation considering the demand growth
+        triangular distribution"""
 
     for i in range(iterations):
         yearDemand = 0
@@ -100,6 +110,8 @@ def calculate_year_growth_demand(iterations):
 
 
 def write_to_file():
+    """writes on a CSV value the randomly generated daily demands from year 2018 to 2023
+    """
     ofile = open(filename + "_Generated-Random-Demand.csv", "wb")
 
     # writing the title of the columns
@@ -115,10 +127,14 @@ def write_to_file():
 
 
 def generate_beta(index):
+    """generates weekly demand ratio following normal distribution with
+     mean and standard deviation for its respective year"""
+
     return numpy.random.normal(weeklyDemandAverage[index], weeklyDemandStandardDeviation[index])
 
 
 def generate_raw(index):
+    """randomly generates daily demand ratio following triangular distribution"""
     p = random.uniform(0, 1)
     raw = 0
     if p <= pConstraints[index]:
@@ -135,6 +151,8 @@ yearDeviationOfRandomDemand = []
 
 
 def calculate_mean_deviation():
+    """calculating mean and standard deviation for the total of the random generated daily demand for each yearly demand."""
+
     for i in range(6):
         yearList = eachYearDailyDemandList[i]
         demand = []
@@ -150,6 +168,8 @@ def calculate_mean_deviation():
 
 
 def calculate_daily_capacity_v2():
+    """Calculates the daily capacity required to fullfill yearly demand based on OTS and Service level."""
+
     global filename
     leadTime = input("Enter Lead Time")
     serviceLevel = input("Enter Service Level")
@@ -174,7 +194,7 @@ def calculate_daily_capacity_v2():
 calculate_year_growth_demand(yearsOfGrowth)
 
 
-# Generate year random demands;
+# Generate yearly random demands;
 count = 0
 while count <= years:
     demand = demandDistribution.generate_random_demand()
@@ -218,22 +238,21 @@ calculate_mean_deviation()
 
 # generates the daily capacity requirements for each lead time and service level.
 factorySpecifications = calculate_daily_capacity_v2()
-# factorySpecifications = calculate_daily_capacity()
 
 
+# outputs in console the daily demand generated for each year
 count = 1
 for day in dailyDemandList:
     if isinstance(day, Classes.DailyDemand):
         print("Year: " + day.year + ", " + day.week + ", " + day.day + ", " + str(day.dailyDemand))
         if count % 364 == 0:
-            print("\n\n")
+            print("\n")
     count += 1
 
 write_to_file()
 
-# def calculate_service_level():
 
-
+# calculates the year demands daily demand and amount shipped and calculates the average of service satisfaction level.
 def summarize_year_demands():
     for x in range(totalYears):
         totalDemand = 0
@@ -254,6 +273,8 @@ def summarize_year_demands():
 
 
 def write_yearly_summary():
+    """writes into a CSV File the average of the daily demand fulfilled service level for each year"""
+
     file_name = filename + "_Yearly-Summary.csv"
     ofile = open(file_name, "wb")
 
@@ -277,10 +298,9 @@ def write_yearly_summary():
     ofile.close()
 
 
+# Calculates the daily satisfaction level based on randomly generated demand.
 yearTotalDemand = []
 yearSummarizeOverPeriod = []
-
-
 currentYearIndex = 0
 for i in range(totalYears):
 
