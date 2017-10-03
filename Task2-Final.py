@@ -58,8 +58,8 @@ def calculate_daily_capacity():
         daily demand following task 2 assumptions."""
 
     global filename
-    leadTime = input("Enter Lead Time")
-    serviceLevel = input("Enter Service Level")
+    leadTime = input("Enter Lead Time:")
+    serviceLevel = input("Enter Service Level:")
     filename = "Lead_Time_" + str(leadTime) + "Service_Level" + str(serviceLevel)
 
     factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, growthYearlyDemand,
