@@ -171,8 +171,8 @@ def calculate_daily_capacity_v2():
     """Calculates the daily capacity required to fullfill yearly demand based on OTS and Service level."""
 
     global filename
-    leadTime = input("Enter Lead Time")
-    serviceLevel = input("Enter Service Level")
+    leadTime = input("Enter Lead Time:")
+    serviceLevel = input("Enter Service Level:")
     filename = "Lead_Time_" + str(leadTime) + "_Service_Level_" + str(serviceLevel)
 
     factorySpecifications = Classes.FactorySpecificationsTask2(leadTimes, yearMeanOfRandomDemand,
