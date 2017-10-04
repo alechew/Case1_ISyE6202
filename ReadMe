@@ -1,0 +1,7 @@
+1.Scripts that generate random data is Task1-Final and Task2-Final
+
+2.You need to import Classes.py in order to make Task1-Final and Task2-Final Run correctly.
+
+3. When running either script, it will ask for service level and OTS.
+
+4. For example if OTS is 15. you need to input 15.0
